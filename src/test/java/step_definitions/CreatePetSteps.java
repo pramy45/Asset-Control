@@ -14,9 +14,14 @@ import org.testng.Assert;
 public class CreatePetSteps {
 
 
-    RequestSpecification request = RestAssured.given();
     Response response;
-    JSONObject requestBody = new JSONObject();
+    private RequestSpecification request;
+    private JSONObject requestBody = new JSONObject();
+    private String CreateURI = "https://petstore.swagger.io/v2/pet";
+
+    public CreatePetSteps() {
+        request = RestAssured.given();
+    }
 
     @Given("^I have set up the ability to create products$")
     public void iHaveSetUpTheAbilityToCreateProducts() {
@@ -34,10 +39,9 @@ public class CreatePetSteps {
 
     @Given("^I perform POST with (.*) as \"([^\"]*)\"$")
     public void iPerformPOSTWithAs(String name, String value) {
-        //request.header("Content-Type","application/json");
         requestBody.put(name, value);
         request.body(requestBody.toJSONString());
-        response = request.post("https://petstore.swagger.io/v2/pet");
+        callTheAPI();
 
     }
 
@@ -68,12 +72,34 @@ public class CreatePetSteps {
         requestBody.put("tags[0].name", "food");
         requestBody.put("status", "pending");
         request.body(requestBody.toJSONString());
-        System.out.println(request.toString());
-        response = request.post("https://petstore.swagger.io/v2/pet");
+        callTheAPI();
+
     }
 
     @Then("^I should see the product created successfully$")
     public void iShouldSeeTheProductCreatedSuccessfully() {
         Assert.assertEquals(response.getStatusCode(), 200);
+    }
+
+    private void callTheAPI() {
+        response = request.post(CreateURI);
+    }
+
+
+    @Given("^I perform POST with invalid category id like \"([^\"]*)\"$")
+    public void iPerformPOSTWithInvalidCategoryIdLike(String id) {
+        requestBody.put("category.id", id);
+        requestBody.put("category.name", "food");
+        request.body(requestBody.toJSONString());
+        callTheAPI();
+
+    }
+
+    @Given("^I perform POST with invalid tag id like \"([^\"]*)\"$")
+    public void iPerformPOSTWithInvalidTagIdLike(String id) {
+        requestBody.put("tags[0].id", id);
+        requestBody.put("tags[0].name", "food");
+        request.body(requestBody.toJSONString());
+        callTheAPI();
     }
 }

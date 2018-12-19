@@ -39,9 +39,12 @@ Feature:
         Given I perform POST with id as "9223372036854775808"
         Then I should see an error response with status code "405"
 
+    Scenario: Verify creating a product on pet store with invalid category id
+        Given I perform POST with invalid category id like "9223372036854775808"
+        Then I should see an error response with status code "500"
 
-
-
-
+    Scenario: Verify creating a product on pet store with invalid tag id
+        Given I perform POST with invalid tag id like "9223372036854775808"
+        Then I should see an error response with status code "500"
 
 
